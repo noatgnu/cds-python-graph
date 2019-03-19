@@ -4,7 +4,7 @@
 # # Data Visualization With Python
 # 
 
-# In[190]:
+# In[1]:
 
 
 import pandas as pd
@@ -25,7 +25,7 @@ import numpy as np
 # 
 # Here we would first attempt to load a CSV files containing coverage statistics of the the first dose of the recommended two-dose Measles vaccine series.
 
-# In[4]:
+# In[2]:
 
 
 file_path = "../data/WHS8_110.csv"
@@ -34,7 +34,7 @@ measles_1 = pd.read_csv(file_path)
 measles_1.head()
 
 
-# In[ ]:
+# In[3]:
 
 
 measles_1 = pd.read_csv(file_path, header=[0, 1])
@@ -42,7 +42,7 @@ measles_1 = pd.read_csv(file_path, header=[0, 1])
 measles_1.head()
 
 
-# In[5]:
+# In[4]:
 
 
 measles_1 = pd.read_csv(file_path, header=[0, 1], index_col=0)
@@ -50,7 +50,7 @@ measles_1 = pd.read_csv(file_path, header=[0, 1], index_col=0)
 measles_1.head()
 
 
-# In[6]:
+# In[5]:
 
 
 measles_1.columns
@@ -59,21 +59,21 @@ measles_1.columns
 # Index have to be unique
 
 
-# In[7]:
+# In[6]:
 
 
 measles_1.columns.names = ["Dose", "Year"]
 measles_1.head()
 
 
-# In[8]:
+# In[7]:
 
 
 measles_1.columns = measles_1.columns.set_levels(["M1"], level=0)
 measles_1.columns
 
 
-# In[9]:
+# In[8]:
 
 
 measles_1.columns = measles_1.columns.set_levels([int(i.strip()) for i in measles_1.columns.levels[1]], level=1)
@@ -82,13 +82,13 @@ measles_1.columns
 
 # # Plotting with Matplotlib
 
-# In[ ]:
+# In[9]:
 
 
 measles_1["M1"].head()
 
 
-# In[144]:
+# In[10]:
 
 
 import matplotlib.pyplot as plt
@@ -99,7 +99,7 @@ plt.ylabel("Coverage (%)")
 
 # To add a simple trendline to this graph, we can use np.polyfit to derive the polynomial coefficients or b_0, b_1 in y = b_0 + b_1*x^1 . Then use np.poly1d to reconstruct the associate polynomial function from the coefficients.
 
-# In[223]:
+# In[11]:
 
 
 aus_m1 = measles_1.loc["Australia"]["M1"]
@@ -107,7 +107,7 @@ aus_m1 = aus_m1.dropna()
 plt.scatter(aus_m1.index, aus_m1.values)
 
 # deriving least squares polynomial coefficients 
-z = np.polyfit(aus_m1.index, aus_m1.values, 2)
+z = np.polyfit(aus_m1.index, aus_m1.astype(int), 2)
 # 1-dimensional polynomial function from the derived coefficients
 p = np.poly1d(z)
 
@@ -117,7 +117,7 @@ plt.xlabel("Year")
 plt.ylabel("Coverage (%)")
 
 
-# In[209]:
+# In[12]:
 
 
 plt.plot(aus_m1.index, aus_m1)
@@ -125,7 +125,7 @@ plt.xlabel("Year")
 plt.ylabel("Coverage (%)")
 
 
-# In[210]:
+# In[13]:
 
 
 us_m1 = measles_1.loc["United States of America"]["M1"]
@@ -136,7 +136,7 @@ plt.ylabel("Coverage (%)")
 plt.legend()
 
 
-# In[238]:
+# In[14]:
 
 
 fig, ax = plt.subplots()
@@ -148,7 +148,7 @@ for b, p in zip(bins, patches):
 
 # Adding a normal distribution curve to the histogram require first deriving of mu and sigma values using norm from scipy.stats package.
 
-# In[237]:
+# In[15]:
 
 
 from scipy.stats import norm
@@ -175,32 +175,28 @@ ax2.plot(bins, hist_fit, color="g")
 bins
 
 
-# In[226]:
+# In[16]:
 
 
 combined = measles_1.loc[["United States of America", "Australia"]]
 combined.head()
 
 
-# In[ ]:
+# In[17]:
 
 
 combined.loc["Australia"].max()
 
 
-# In[ ]:
+# In[18]:
 
 
 combined.max()
 
 
-# In[ ]:
-
-
 # max() function did not work on a single data series but it work on a dataframe.
 
-
-# In[ ]:
+# In[19]:
 
 
 combined.max(numeric_only=True)
@@ -219,7 +215,7 @@ combined.max(numeric_only=True)
 #     return x + 1
 # ```
 
-# In[224]:
+# In[20]:
 
 
 # All other column values are not integer type
@@ -239,20 +235,20 @@ f = lambda x: x if type(x) is not str else int(x)
 #         return int(x)
 # ```
 
-# In[227]:
+# In[21]:
 
 
 combined = combined.applymap(f)
 combined.max(numeric_only=True)
 
 
-# In[228]:
+# In[22]:
 
 
 combined["M1"].head()
 
 
-# In[235]:
+# In[23]:
 
 
 # https://matplotlib.org/examples/color/colormaps_reference.html
@@ -268,14 +264,14 @@ ax.set_yticklabels(combined["M1"].index)
 cbar = plt.colorbar(hm, ax=ax, pad=.015, aspect=10)
 
 
-# In[239]:
+# In[24]:
 
 
 # Now let do a heatmap of the whole dataset.
 measles_1.applymap(f)
 
 
-# In[236]:
+# In[25]:
 
 
 # Error due to at least one value can't be converted into int
@@ -298,13 +294,13 @@ measles_1 = measles_1.applymap(f2)
 #             return int(x)
 # ```
 
-# In[ ]:
+# In[26]:
 
 
 measles_1.head()
 
 
-# In[ ]:
+# In[27]:
 
 
 fig2, ax2 = plt.subplots(figsize=(10,40))
@@ -319,7 +315,7 @@ ax2.set_yticklabels(measles_1["M1"].index)
 cbar = plt.colorbar(hm, ax=ax2, pad=.015, aspect=10)
 
 
-# In[156]:
+# In[28]:
 
 
 file_path2 = "..\data\MCV2.csv"
@@ -335,7 +331,7 @@ measles = measles_1.join(measles_2)
 measles.head()
 
 
-# In[157]:
+# In[29]:
 
 
 def make_hm(ax, dose, title):
@@ -354,7 +350,7 @@ make_hm(ax_m1, "M1", "Measles First Dose Statistics")
 make_hm(ax_m2, "M2", "Measles Second Dose Statistics")
 
 
-# In[ ]:
+# In[30]:
 
 
 # Saving image in SVG format
@@ -363,7 +359,7 @@ fig3.savefig("measles.svg")
 
 # # Plotting with Bokeh
 
-# In[240]:
+# In[31]:
 
 
 # Plotting with Bokeh
@@ -372,14 +368,14 @@ m1 = measles.loc["Australia", "M1"].dropna()
 m1.head()
 
 
-# In[241]:
+# In[32]:
 
 
 m2 = measles.loc["Australia", "M2"].dropna()
 m2.head()
 
 
-# In[242]:
+# In[33]:
 
 
 output_file('measles.html')
@@ -387,31 +383,31 @@ curdoc().clear()
 p = figure(title="Measles", x_axis_label="Years", y_axis_label="Coverage (%)")
 
 
-# In[243]:
+# In[34]:
 
 
 p.line(m1.index, m1, legend="M1")
 
 
-# In[244]:
+# In[35]:
 
 
 show(p)
 
 
-# In[245]:
+# In[36]:
 
 
 p.line(m2.index, m2, legend="M2", line_color="red")
 
 
-# In[246]:
+# In[37]:
 
 
 show(p)
 
 
-# In[169]:
+# In[38]:
 
 
 # Bring legend out
@@ -430,12 +426,12 @@ p.add_layout(legend, 'right')
 show(p)
 
 
-# In[252]:
+# In[39]:
 
 
 # Combining line and scatter plot
 curdoc().clear()
-TOOLS = "crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select"
+TOOLS = "crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save"
 output_file('measles.html')
 p = figure(title="Measles", x_axis_label="Years", y_axis_label="Coverage (%)", toolbar_location="above", tools=TOOLS)
 m1_circle = p.circle(m1.index, m1, radius=0.3, fill_color="green", line_color=None)
@@ -462,7 +458,7 @@ p.add_layout(legend, 'right')
 show(p)
 
 
-# In[254]:
+# In[40]:
 
 
 # Multiple graphs
@@ -472,7 +468,7 @@ data = measles.loc[["Australia", "United States of America"]]
 data.head()
 
 
-# In[255]:
+# In[41]:
 
 
 curdoc().clear()
@@ -494,14 +490,14 @@ graph = gridplot([figure_list])
 show(graph)
 
 
-# In[256]:
+# In[42]:
 
 
 from bokeh.models import LinearColorMapper, BasicTicker, PrintfTickFormatter, ColorBar
 from bokeh.palettes import Plasma
 
 
-# In[257]:
+# In[43]:
 
 
 # Transpose the data so that years will become index and country become columns
@@ -516,7 +512,7 @@ data_long = data_t.loc["M1"].stack().reset_index()
 data_long.head()
 
 
-# In[258]:
+# In[44]:
 
 
 # Rename the newly created column 0 and convert Year column into categorical
@@ -525,7 +521,7 @@ data_long["Year"] = data_long["Year"].astype(str)
 data_long.head()
 
 
-# In[260]:
+# In[45]:
 
 
 # Heatmap using plasma color palette
@@ -555,7 +551,7 @@ p.add_layout(cbar, "right")
 show(p)
 
 
-# In[266]:
+# In[46]:
 
 
 # Make another heatmap function to reuse
@@ -588,7 +584,7 @@ def make_bokeh_heatmap(data, years, countries, title, colors, plot_width, plot_h
     return p
 
 
-# In[267]:
+# In[47]:
 
 
 # Heatmap using custom color palette as well as adding annotation and other styling option
@@ -598,7 +594,7 @@ p = make_bokeh_heatmap(data_long, years, countries, "Measles First Dose Coverage
 show(p)
 
 
-# In[272]:
+# In[48]:
 
 
 # Gridplot with two heatmap of measles coverage with every country
@@ -628,7 +624,7 @@ show(grid)
 
 # Height of the color bar can be change with an additional height parameter to the ColorBar object.
 
-# In[109]:
+# In[49]:
 
 
 # Mapping geographically relevant data using bokeh and geojson
@@ -644,14 +640,14 @@ with open("../data/countries.geojson", "rb") as infile:
     geojson = json.load(infile)
 
 
-# In[110]:
+# In[50]:
 
 
 country_region = pd.read_csv("../data/countries.regions.csv", index_col=0)
 country_region.head()
 
 
-# In[111]:
+# In[51]:
 
 
 country_region = country_region[country_region["region"].isin(["Asia", "Oceania"])]
@@ -660,7 +656,7 @@ selected_countries = country_region.join(measles["M1"])
 selected_countries.tail()
 
 
-# In[112]:
+# In[52]:
 
 
 from bokeh.palettes import viridis
@@ -668,7 +664,7 @@ color_list = viridis(20)
 mapper = LinearColorMapper(palette=color_list, low=0, high=100)
 
 
-# In[114]:
+# In[53]:
 
 
 # looping through each countries within the geojson file and add coverage data and only include the country if we have coverage data
@@ -685,14 +681,14 @@ for f in geojson["features"]:
 new_dict = {"type": "FeatureCollection", "features": modded_data}
 
 
-# In[115]:
+# In[54]:
 
 
 # create a geojsondata string that can be load by GeoJSONDataSource
 geo_data = GeoJSONDataSource(geojson=json.dumps(new_dict))
 
 
-# In[116]:
+# In[55]:
 
 
 curdoc().clear()
